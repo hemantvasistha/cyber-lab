@@ -321,6 +321,11 @@ const GLOSS = [
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function recFor(id){
+  const r = prog[id] = prog[id] || {};
+  r.mods = r.mods || {}; r.les = r.les || {}; r.quiz = r.quiz || []; r.exam = r.exam || [];
+  return r;
+}
 
 /* ---------- gating engine ---------- */
 const modKey = m => m.id;
@@ -439,7 +444,7 @@ function drawModule(){
       <button class="btn primary" id="nextles">${step===0?"Start lessons":"Next lesson"} →</button>
       <button class="btn modalclose" onclick="closeModal()">Close</button>`;
     $("#nextles").onclick = () => {
-      const rec = prog[lvl.id] = prog[lvl.id] || { mods:{}, les:{}, quiz:[], exam:[] };
+      const rec = recFor(lvl.id);
       rec.les[m.id] = rec.les[m.id] || [];
       if (!rec.les[m.id].includes(step)) rec.les[m.id].push(step);
       saveProg(); ctx.step++; drawModule();
@@ -460,7 +465,7 @@ function drawQuiz(lvl, m){
   function q(){
     if (qi >= m.quiz.length){
       if (correct === m.quiz.length){
-        const rec = prog[lvl.id] = prog[lvl.id] || { mods:{}, les:{}, quiz:[], exam:[] };
+        const rec = recFor(lvl.id);
         if (!rec.quiz.includes(m.id)) rec.quiz.push(m.id);
         if (rec.les[m.id]?.length === m.lessons.length) rec.mods[m.id] = true;
         saveProg();
@@ -498,7 +503,7 @@ function openExam(lvl){
     if (qi >= lvl.exam.length){
       const pass = correct/lvl.exam.length >= 0.8;
       if (pass){
-        const rec = prog[lvl.id] = prog[lvl.id] || { mods:{}, les:{}, quiz:[], exam:[] };
+        const rec = recFor(lvl.id);
         rec.exam.push("passed"); saveProg();
         $("#modalbox").innerHTML = `<h3>🎓 ${lvl.name} cleared!</h3>
           <p class="score" style="color:var(--green)">${correct}/${lvl.exam.length} — next level unlocked.</p>
