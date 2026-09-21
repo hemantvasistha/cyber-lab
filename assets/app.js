@@ -358,7 +358,7 @@ function renderDashboard(){
   grid.innerHTML = COURSE.map(l => {
     const p = levelProgress(l), unlocked = levelUnlocked(l);
     return `<div class="card level ${unlocked?"":"locked"}" data-lvl="${l.id}">
-      <div class="lvlhead"><span class="lnum">${l.icon}</span>
+      <div class="lvlhead"><span class="lnum">${l.id}</span>
       <h3>${l.name} <span class="muted">· ${l.tag}</span></h3>
       <span class="badge ${p.done===p.total?"b-done":(unlocked?"b-pend":"b-lock")}">${unlocked ? p.done+"/"+p.total : "🔒 locked"}</span></div>
       <div class="bar"><i style="width:${unlocked?p.pct:0}%"></i></div>
@@ -373,6 +373,7 @@ function xp(){
   let x = 0;
   COURSE.forEach(l => (l.modules||[]).forEach(m => { if (modComplete(l,m)) x += 50; }));
   COURSE.forEach(l => { if (examPassed(l)) x += 150; });
+  if (typeof doneMissions !== "undefined") x += doneMissions.length * 25;
   return x;
 }
 
@@ -388,7 +389,7 @@ function renderAcademy(){
         <span class="badge ${done?"b-done":"b-pend"}" style="margin-left:auto">${done?"done":"open"}</span></div>`;
     }).join("");
     return `<div class="card level ${unlocked?"":"locked"}" id="level-${l.id}">
-      <div class="lvlhead"><span class="lnum">${l.icon}</span>
+      <div class="lvlhead"><span class="lnum">${l.id}</span>
         <div><h3>${l.name} <span class="muted">· ${l.tag}</span></h3><p class="muted">${l.blurb}</p></div>
         <span class="badge ${p.done===p.total?"b-done":(unlocked?"b-pend":"b-lock")}">
           ${unlocked ? p.done+"/"+p.total : "🔒 complete "+l.requires+" first"}</span></div>

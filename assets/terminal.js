@@ -51,7 +51,7 @@ const MISSIONS = [
   { id:"T10",lvl:"L2", cmd:"cp /home/kali/notes.txt /tmp/n.txt", why:"copy a file" },
   { id:"T11",lvl:"L2", cmd:"rm /tmp/n.txt",     why:"delete it again" },
   { id:"T12",lvl:"L3", cmd:"cat /home/kali/recon/scan1.txt", why:"read a scan result" },
-  { id:"T13",lvl:"L3", cmd:"grep open /home/kali/recon/file_that_exists.txt", why:"grep scan output", alt:"grep open /home/kali/recon/scan1.txt" },
+  { id:"T13",lvl:"L3", cmd:"grep open /home/kali/recon/scan1.txt", why:"grep scan output" },
   { id:"T14",lvl:"L3", cmd:"nc -nv 10.0.2.2 22", why:"banner grab with netcat" },
   { id:"T15",lvl:"L3", cmd:"sudo whoami",        why:"elevate briefly" },
   { id:"T16",lvl:"L4", cmd:"nmap -sV 10.0.2.2",  why:"run the simulated scanner" },
@@ -96,7 +96,7 @@ function fakeNmap(args){
   const target = args.find(a => !a.startsWith("-")) || "10.0.2.2";
   if (target === "10.0.2.15" || target === "localhost" || target === "127.0.0.1"){
     tprint("Starting Nmap 7.95 ( https://nmap.org )");
-    tprint("Nmap scan report for " + target);
+    tprint("Nmap scan report for " + esc(target));
     tprint("Host is up (0.00012s latency).");
     tprint("PORT     STATE  SERVICE      VERSION");
     tprint("22/tcp   open   ssh          OpenSSH 9.6p1");
@@ -213,7 +213,7 @@ function runCmd(raw){
       const start = arg[0] ? resolve(arg[0]) : CWD;
       const nameIdx = args.indexOf("-name");
       const pat = nameIdx >= 0 ? args[nameIdx+1].replace(/['"]/g,"") : null;
-      const re = pat ? new RegExp("^" + pat.replace(/\./g,"\\.").replace(/\*/g,".*") + "$") : null;
+      const re = pat ? new RegExp("^" + pat.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*") + "$") : null;
       const hits = Object.keys(VFS).filter(k => k.startsWith(start) && (!re || re.test(k.split("/").pop())));
       tprintEsc(hits.length ? hits.join("\n") : "(no results)");
       break;
