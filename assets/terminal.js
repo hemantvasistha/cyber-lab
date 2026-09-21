@@ -146,15 +146,12 @@ function runCmd(raw){
       const node = VFS[target];
       if (node === undefined) { tprint(`ls: cannot access '${esc(arg[0])}': No such file or directory`, "err"); break; }
       if (Array.isArray(node)) {
-        const items = node.map(n => flags.includes("-l")||flags.includes("-a")||flags.includes("-la")
-          ? `${flags.includes("-a")&&n.startsWith(".")?"":""}drwxr-xr-x 1 kali kali 4096 Sep 21 10:00 ${n}` : n);
+        const long = flags.some(f => f.includes("l"));
+        const all = flags.some(f => f.includes("a"));
+        const items = node.map(n => long ? `drwxr-xr-x 1 kali kali 4096 Sep 21 10:00 ${n}` : n);
         items.sort();
-        if (flags.includes("-a")) {
-          VFS[target].unshift(".");
-          items.unshift(".");
-        }
-        tprintEsc(items.join(flags.includes("-l")?"\n":"  "));
-        if (flags.includes("-a")) VFS[target].splice(0,1); // undo unshift hack
+        if (all) items.unshift(".", "..");
+        tprintEsc(items.join(long?"\n":"  "));
       } else tprintEsc(target);
       break;
     }
@@ -331,16 +328,57 @@ function histPush(c){ hist.push(c); }
 function histPrint(){ tprintEsc(hist.slice(-20).map((c,i)=>`  ${i+1}  ${c}`).join("\n") || "(empty)"); }
 
 /* ---------- input wiring ---------- */
+let histCursor = null; // null = live input; number = index into hist
 function wireTerminal(){
   const inp = $("#terminput"); if (!inp) return;
   inp.addEventListener("keydown", e => {
     if (e.key === "Enter") {
       runCmd(inp.value);
       inp.value = "";
+      histCursor = null;
     } else if (e.key === "ArrowUp") {
-      const last = hist[hist.length-2] || "";
-      inp.value = last;
       e.preventDefault();
+      if (!hist.length) return;
+      histCursor = histCursor === null ? hist.length - 1 : Math.max(0, histCursor - 1);
+      inp.value = hist[histCursor];
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (histCursor === null) return;
+      histCursor++;
+      if (histCursor >= hist.length) { histCursor = null; inp.value = ""; }
+      else inp.value = hist[histCursor];
+    } else if (e.key === "Tab") {
+      e.preventDefault();
+      const val = inp.value;
+      const parts = val.split(/\s+/);
+      const last = parts[parts.length-1] || "";
+      let pool, prefix;
+      if (parts.length <= 1) {
+        pool = ["pwd","ls","cd","cat","grep","find","mkdir","cp","mv","rm","touch","whoami","id","uname","history","clear","echo","wc","head","tail","chmod","sudo","ping","ip","nc","nmap","john","hydra","help","missions"];
+        prefix = last;
+      } else {
+        // path completion against the VFS from the resolved parent dir
+        const slash = last.lastIndexOf("/");
+        const dirPart = slash >= 0 ? last.slice(0, slash+1) : "";
+        const base = slash >= 0 ? last.slice(slash+1) : last;
+        const dir = resolve(dirPart || ".");
+        const entries = VFS[dir];
+        if (!Array.isArray(entries)) return;
+        pool = entries.filter(n => n.startsWith(base)).map(n => dirPart + n);
+        prefix = dirPart + base;
+      }
+      const hits = [...new Set(pool.filter(p => p.startsWith(prefix)))];
+      if (hits.length === 1) {
+        parts[parts.length-1] = hits[0];
+        inp.value = parts.join(" ");
+      } else if (hits.length > 1) {
+        tprint(hits.join("  "), "dimt");
+        // extend to the longest common prefix
+        let lcp = hits[0];
+        for (const h of hits) { let i=0; while(i<lcp.length && lcp[i]===h[i]) i++; lcp = lcp.slice(0,i); }
+        parts[parts.length-1] = lcp;
+        inp.value = parts.join(" ");
+      }
     }
   });
   tprint("CyberLab Terminal Trainer — simulated Kali. Type <b>help</b> for commands, <b>missions</b> for tasks.", "dimt");
