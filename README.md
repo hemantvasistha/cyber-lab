@@ -1,40 +1,59 @@
-# 🛡️ Hemant's Cyber Lab
+# 🛡️ CyberLab Academy
 
-A beginner-built, fully local cybersecurity lab — Kali Linux VM on Windows,
-GUI-first, one-command rebuild, documented in public. **This repo IS the lab's
-brain**: dashboard, notes, and every automation script that built it.
+**A gated, level-based cybersecurity academy with a built-in terminal trainer —
+beginner to professional — running entirely inside one repo.**
+Built and used daily by a B.Tech first-semester student as a public proof of work.
 
-![status](https://img.shields.io/badge/build-B.Tech%20Sem%201-4da3ff)
-![platform](https://img.shields.io/badge/platform-Windows%2011%20%2B%20VirtualBox-2ea86b)
-![ethics](https://img.shields.io/badge/use-lab--internal%20only-d99a2b)
+![level](https://img.shields.io/badge/levels-5_gated-58a6ff)
+![terminal](https://img.shields.io/badge/terminal_trainer-25%2B_commands-3fb950)
+![tools](https://img.shields.io/badge/tools_documented-12-d29922)
+![ethics](https://img.shields.io/badge/targets-lab--only-f85149)
 
-## 🚀 Live dashboard
-After enabling GitHub Pages, this lab's control center is viewable at:
-`https://hemantvasistha.github.io/cyber-lab/`
+## 🌐 Live site
+Once GitHub Pages is enabled (Settings → Pages → `main` / root):
+**https://hemantvasistha.github.io/cyber-lab/**
 
-## 🗂️ What's in here
-| Path | Purpose |
-|------|---------|
-| `index.html` | The dashboard — lab progress, notes index, golden rules |
-| `docs/PRD.md` | Product requirements: goals, acceptance criteria, constraints |
-| `docs/supabase.md` | Optional live-progress sync setup |
-| `notes/` | Roadmap, cheat sheet, lab guide, journal |
-| `scripts/` | Everything that builds the lab automatically (see below) |
-| `tools/cyberguideme-Tools/` | Curated security-tool reference collection |
+## What's inside
+| Section | What you get |
+|---|---|
+| **Dashboard** | Hero, about, live architecture diagram, per-level progress + XP |
+| **Academy** | 5 gated levels × 18 modules — lessons, knowledge checks, 80% exams |
+| **Terminal** | Two-way command panel: simulated Kali with a virtual filesystem, guided missions, XP |
+| **Tools** | 12 lab tools: purpose, unlock level, copy-ready commands |
+| **Glossary** | 30 searchable terms — no jargon left unexplained |
 
-## ⚙️ One-command rebuild (on a fresh Windows PC)
+## The 5 levels (strict gating)
+```
+L1 Initiate    → basics, ethics, lab architecture, terminal foundations
+L2 Operator    → permissions, text processing, networking, FIRST REAL VM TASKS
+L3 Explorer    → web security, vulnerability analysis, cracking, CTF craft
+L4 Adversary   → exploitation, privesc, Python tooling, blue-team logs
+L5 Professional→ methodology, reports, certifications, capstone
+```
+A level unlocks **only** after every module of the previous level is complete
+**and** its exam is passed (≥ 80%). Progress saves in your browser (localStorage).
+
+## The real lab behind the site
+The site teaches; the machine hacks. `scripts/` builds a genuine Kali Linux VM
+on this PC (VirtualBox, D: drive, snapshot-protected, SHA256-verified image):
 ```powershell
-# from repo root — one UAC prompt, then walk away
 powershell -ExecutionPolicy Bypass -File scripts\setup-lab.ps1
 ```
-1. `install-tools.ps1` → VirtualBox + 7-Zip + Wireshark + Burp Community
-2. `download-kali.ps1` → official Kali 2026.2 image, resumable, **SHA256-verified**
-3. `create-vm.ps1` → extract → register VM (4 GB / 4 vCPU) → snapshot `fresh-install`
+
+## Repo layout
+```
+index.html          the academy (single-page app)
+assets/             style.css · app.js (course+gating) · terminal.js (simulator)
+docs/               PRD · supabase live-sync guide
+notes/              cheatsheet · roadmap · local-lab guide · journal
+scripts/            setup-lab.ps1 + download/verify/create-vm + launcher
+tools/              curated tool reference collection
+```
 
 ## ⚖️ Ethics
-Every tool here stays inside the lab's own VMs. Golden rules are baked into the
-dashboard. Nothing in this repo is intended for use against systems the owner
-doesn't own or have explicit written permission to test.
+Every technique here is taught and practiced **only against machines the owner
+controls** — the browser simulator and the local VM. The gating itself is a
+pedagogical statement: skills before access, ethics before skills.
 
 ## 📜 License
 MIT — see [LICENSE](LICENSE).

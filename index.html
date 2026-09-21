@@ -3,134 +3,162 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hemant's Cyber Lab — Dashboard</title>
-<style>
-  :root{
-    --bg:#0b0f14; --panel:#111823; --panel2:#0e141d; --line:#1e2a3a;
-    --text:#e6edf3; --dim:#8b98a9; --green:#2ea86b; --amber:#d99a2b;
-    --accent:#4da3ff; --accent2:#7c5cff;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{background:radial-gradient(1200px 600px at 20% -10%, #12203a 0%, var(--bg) 55%);
-    color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; min-height:100vh; padding:32px 16px;}
-  .wrap{max-width:1080px;margin:0 auto}
-  header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:28px}
-  h1{font-size:1.7rem;letter-spacing:.5px}
-  h1 span{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
-  .pill{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 14px;font-size:.85rem;color:var(--dim)}
-  .pill b{color:var(--amber)}
-  .bar{height:10px;background:var(--panel2);border:1px solid var(--line);border-radius:999px;overflow:hidden;margin:6px 0 26px}
-  .bar>div{height:100%;width:17%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:999px;transition:width .6s}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:16px}
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;transition:transform .15s,border-color .15s}
-  .card:hover{transform:translateY(-3px);border-color:#2c3e57}
-  .card h3{font-size:1.02rem;margin-bottom:6px;display:flex;align-items:center;gap:8px}
-  .card p{color:var(--dim);font-size:.88rem;line-height:1.5}
-  .badge{margin-left:auto;font-size:.72rem;padding:3px 10px;border-radius:999px;border:1px solid}
-  .done{color:var(--green);border-color:var(--green)}
-  .pend{color:var(--amber);border-color:var(--amber)}
-  .next{margin-top:10px;font-size:.8rem;color:var(--accent)}
-  h2{font-size:1.05rem;margin:30px 0 12px;color:var(--dim);text-transform:uppercase;letter-spacing:2px;font-size:.8rem}
-  .links{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
-  .lnk{display:block;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-decoration:none;color:var(--text);font-size:.9rem}
-  .lnk:hover{border-color:var(--accent)}
-  .lnk small{display:block;color:var(--dim);margin-top:3px;font-size:.75rem}
-  .rules{background:linear-gradient(135deg,#1a0f14,#160f1a);border:1px solid #3a1e2a;border-radius:14px;padding:18px;margin-top:16px}
-  .rules li{color:#e8b4c0;font-size:.88rem;margin:7px 0 0 18px;line-height:1.5}
-  footer{margin-top:34px;text-align:center;color:var(--dim);font-size:.8rem;line-height:1.7}
-  footer a{color:var(--accent);text-decoration:none}
-</style>
+<title>CyberLab Academy — Hemant Vasist</title>
+<meta name="description" content="A gated, level-based cybersecurity academy with a built-in terminal trainer — beginner to professional, from a B.Tech student's own lab.">
+<link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-<div class="wrap">
 
-  <header>
-    <h1>🛡️ <span>HEMANT'S CYBER LAB</span></h1>
-    <div class="pill">B.Tech Sem 1 · <b>Phase <span id="cur">2</span> of 6</b></div>
-  </header>
+<!-- ================= NAV ================= -->
+<nav id="nav">
+  <a class="brand" href="#" onclick="showTab('dashboard');return false;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="1.8">
+      <path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/>
+      <path d="M9 12l2 2 4-4" stroke="#3fb950"/>
+    </svg>
+    CyberLab <span style="color:var(--accent)">Academy</span>
+  </a>
+  <div id="navlinks">
+    <button data-tab="dashboard">Dashboard</button>
+    <button data-tab="academy">Academy</button>
+    <button data-tab="terminal">Terminal</button>
+    <button data-tab="tools">Tools</button>
+    <button data-tab="glossary">Glossary</button>
+  </div>
+  <div class="pill">⭐ <b id="navxpv">0</b> XP</div>
+</nav>
 
-  <div class="bar"><div id="barfill"></div></div>
+<!-- ================= DASHBOARD ================= -->
+<main class="wrap">
 
-  <div class="grid" id="phases"></div>
-
-  <h2>📚 Your notes — start here</h2>
-  <div class="links">
-    <a class="lnk" href="notes/README.md">📖 Lab README <small>golden rules + how the lab works</small></a>
-    <a class="lnk" href="notes/cheatsheet.md">🐧 Commands cheat sheet <small>the 20 commands you'll actually use</small></a>
-    <a class="lnk" href="notes/roadmap.md">🗺️ Career roadmap <small>sem 1 → job-ready plan</small></a>
-    <a class="lnk" href="notes/lab-journal.md">📓 Lab journal <small>write an entry every session</small></a>
-    <a class="lnk" href="notes/local-lab-guide.md">💻 Local lab guide <small>how this Kali VM was built & how to reset it</small></a>
-    <a class="lnk" href="notes/future-local-lab.md">💾 Future options <small>cloud & advanced setups for later</small></a>
+<section id="tab-dashboard">
+  <div class="hero">
+    <div>
+      <h2>Learn hacking <span>safely, level by level</span> — in a real lab you own.</h2>
+      <p>A gated academy: complete each level's modules and exam to unlock the next —
+         and unlock real lab access step by step. Built by a first-semester student,
+         running entirely on his own machine.</p>
+      <a class="btn primary" href="#" onclick="showTab('academy');return false;">Start Level 1 →</a>
+      <a class="btn" href="#" onclick="showTab('terminal');return false;">Try the Terminal</a>
+      <div class="herostats">
+        <div><b id="stat-lvls">5</b>levels</div>
+        <div><b id="stat-mods">18</b>modules</div>
+        <div><b id="stat-cmds">25+</b>terminal commands</div>
+        <div><b id="stat-tools">12</b>lab tools documented</div>
+      </div>
+    </div>
+    <div class="svgwrap">
+      <svg viewBox="0 0 420 300" role="img" aria-label="Lab architecture diagram">
+        <defs>
+          <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#1f6feb" stop-opacity=".25"/>
+            <stop offset="1" stop-color="#7c3aed" stop-opacity=".25"/>
+          </linearGradient>
+        </defs>
+        <rect x="0" y="0" width="420" height="300" rx="14" fill="#0b0f14" stroke="#30363d"/>
+        <rect x="20" y="18" width="380" height="120" rx="10" fill="url(#g1)" stroke="#58a6ff"/>
+        <text x="210" y="42" fill="#e6edf3" font-size="14" text-anchor="middle" font-weight="bold">WINDOWS 11 — the host</text>
+        <rect x="40" y="58" width="105" height="34" rx="8" fill="#161b22" stroke="#30363d"/>
+        <text x="92" y="80" fill="#8b949e" font-size="11" text-anchor="middle">VirtualBox</text>
+        <rect x="158" y="58" width="105" height="34" rx="8" fill="#161b22" stroke="#30363d"/>
+        <text x="210" y="80" fill="#8b949e" font-size="11" text-anchor="middle">Dashboard UI</text>
+        <rect x="276" y="58" width="105" height="34" rx="8" fill="#161b22" stroke="#30363d"/>
+        <text x="328" y="80" fill="#8b949e" font-size="11" text-anchor="middle">Scripts (D:)</text>
+        <rect x="40" y="152" width="360" height="128" rx="12" fill="#0b0f14" stroke="#3fb950"/>
+        <text x="220" y="176" fill="#e6edf3" font-size="14" text-anchor="middle" font-weight="bold">KALI LINUX — the guest VM</text>
+        <rect x="60" y="192" width="100" height="30" rx="8" fill="#161b22" stroke="#30363d"/>
+        <text x="110" y="211" fill="#8b949e" font-size="11" text-anchor="middle">Terminal</text>
+        <rect x="172" y="192" width="100" height="30" rx="8" fill="#161b22" stroke="#30363d"/>
+        <text x="222" y="211" fill="#8b949e" font-size="11" text-anchor="middle">Wireshark</text>
+        <rect x="284" y="192" width="96" height="30" rx="8" fill="#161b22" stroke="#30363d"/>
+        <text x="332" y="211" fill="#8b949e" font-size="11" text-anchor="middle">Burp Suite</text>
+        <text x="220" y="252" fill="#8b949e" font-size="11" text-anchor="middle">Snapshots · NAT network · D:\CyberLab\vm</text>
+        <path d="M110 92 L110 152" stroke="#3fb950" stroke-width="2" marker-end="url(#arr)"/>
+        <path d="M330 92 L330 152" stroke="#3fb950" stroke-width="2"/>
+      </svg>
+    </div>
   </div>
 
-  <h2>🚀 Practice targets (open in VM browser)</h2>
-  <div class="links">
-    <a class="lnk" href="https://overthewire.org/wargames/bandit/">🎯 OverTheWire: Bandit <small>learn Linux by playing — perfect first game</small></a>
-    <a class="lnk" href="https://owasp.org/www-project-web-security-dojo/">🕸️ OWASP materials <small>web security reference</small></a>
-    <a class="lnk" href="https://www.virtualbox.org/manual/UserManual.html">📦 VirtualBox manual <small>when you want VM superpowers</small></a>
+  <h2 class="tabtitle">About this lab</h2>
+  <p class="tabsub">What this platform contains and why it exists.</p>
+  <div class="grid">
+    <div class="card"><h3>🎓 The Academy</h3>
+      <p class="muted">Five gated levels from zero to professional. Every module has lessons +
+      a knowledge check; every level ends in an exam. Pass 80% to unlock the next level.
+      Your progress is saved in your browser — no account needed.</p></div>
+    <div class="card"><h3>💻 The Terminal Trainer</h3>
+      <p class="muted">A real-feeling Linux terminal in your browser with a virtual filesystem.
+      Practice pwd, ls, cd, cat, grep, find, nmap and more with guided missions that
+      award XP — before you ever touch the actual VM.</p></div>
+    <div class="card"><h3>🧰 The Tool Reference</h3>
+      <p class="muted">The 12 core lab tools — what each does, when you unlock it,
+      and ready-to-copy commands for the real Kali VM.</p></div>
+    <div class="card"><h3>🖥️ The Real Lab</h3>
+      <p class="muted">A genuine Kali Linux VM on this machine's D: drive, built by
+      one script: <code>scripts\setup-lab.ps1</code>. Verified download, snapshot-protected,
+      fully legal targets only.</p></div>
   </div>
 
-  <div class="rules">
-    <b>⚖️ The Golden Rules — read before touching any tool</b>
-    <ol>
-      <li>Only scan/attack machines <b>inside this lab</b> — your own VMs, nothing else.</li>
-      <li>Never target college, hostel, public WiFi, or any real website. Ever.</li>
-      <li>The VM is disposable — <b>snapshot before experiments, revert after mistakes.</b></li>
-      <li>Notes the same day: a lesson you can't explain is a lesson you lost.</li>
-      <li>When stuck 15+ min: read the guide again, then search, then ask — in that order.</li>
-    </ol>
-  </div>
+  <h2 class="tabtitle" style="margin-top:26px">Your progress</h2>
+  <div class="grid" id="dashlevels"></div>
+  <div class="callout" id="dash-next"></div>
+</section>
 
-  <footer>
-    Built by <b>Hemant Vasist</b> ·
-    <a href="https://github.com/hemantvasistha">github.com/hemantvasistha</a><br>
-    Repo: <a href="https://github.com/hemantvasistha/cyber-lab">hemantvasistha/cyber-lab</a> ·
-    Dashboard served by GitHub Pages
-  </footer>
+<!-- ================= ACADEMY ================= -->
+<section id="tab-academy" hidden>
+  <h2 class="tabtitle">Academy — 5 gated levels</h2>
+  <p class="tabsub">Complete every module (lessons + quiz), then pass the level exam (80%) to unlock the next level. Click a level to expand it.</p>
+  <div id="levels"></div>
+</section>
+
+<!-- ================= TERMINAL ================= -->
+<section id="tab-terminal" hidden>
+  <h2 class="tabtitle">Terminal Trainer — the two-way command panel</h2>
+  <p class="tabsub">A simulated Kali terminal in your browser: type real commands, get realistic output. Complete missions to earn XP — they mirror what you'll do in the real VM.</p>
+  <div class="termlayout">
+    <div>
+      <div id="term"></div>
+      <div id="termin">
+        <span>kali@kali:~$</span>
+        <input id="terminput" autocomplete="off" spellcheck="false" placeholder="type a command… (help)">
+      </div>
+    </div>
+    <div>
+      <div class="card"><h3>🎯 Missions</h3><p class="muted">Locked ones unlock with their academy level.</p></div>
+      <div id="missions"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TOOLS ================= -->
+<section id="tab-tools" hidden>
+  <h2 class="tabtitle">Lab Tools — list & command guide</h2>
+  <p class="tabsub">Every core tool in the Kali VM: what it does, which level unlocks it, and copy-ready commands to run inside the real lab.</p>
+  <div class="grid" id="toollist"></div>
+</section>
+
+<!-- ================= GLOSSARY ================= -->
+<section id="tab-glossary" hidden>
+  <h2 class="tabtitle">Glossary</h2>
+  <p class="tabsub">Never get lost in jargon again.</p>
+  <input id="gsearch" placeholder="Search a term… (e.g. port, hash, payload)">
+  <div class="glos" id="gloslist"></div>
+</section>
+
+</main>
+
+<!-- ================= MODAL ================= -->
+<div id="modal">
+  <div id="modalbox"></div>
 </div>
 
-<script>
-/* ============ SINGLE SOURCE OF TRUTH ============
-   scripts/setup-lab.ps1 updates this after each install step. */
-const PHASES = [
-  {t:"📦 Lab structure",        d:"Folder skeleton on D:\\CyberLab — recon, web, pentest, forensics, CTF and more. Everything has a home.",  s:"done",  n:"Complete."},
-  {t:"🖥️ Dashboard UI",         d:"This page. Your control center: progress, notes, and rules — served from the repo itself.",               s:"done",  n:"You're looking at it."},
-  {t:"🧰 Software install",     d:"VirtualBox (runs the VM) + 7-Zip (unpacks Kali) + Wireshark & Burp Suite (your GUI tools).",              s:"pend",  n:"Next: one admin approval, one script."},
-  {t:"🐧 Kali Linux VM",        d:"Official pre-built Kali image → verified by SHA256 → extracted to D:\\CyberLab\\vm → first boot → snapshot.", s:"pend", n:"Then: download resumes automatically."},
-  {t:"☁️ GitHub publish",       d:"Push this lab to github.com/hemantvasistha — portfolio + this dashboard live on the internet.",           s:"pend",  n:"Then: repo creation + Pages."},
-  {t:"🎓 First mission",        d:"OverTheWire Bandit Level 0 → 5 from inside the VM — your first real hacking challenge, fully legal.",     s:"pend",  n:"Then: game on."}
-];
-function render(phases){
-  const done = phases.filter(p=>p.s==="done").length;
-  document.getElementById("cur").textContent = done + 1;
-  document.getElementById("barfill").style.width = Math.round(done/phases.length*100) + "%";
-  document.getElementById("phases").innerHTML = phases.map(p=>`
-  <div class="card"><h3>${p.t}
-    <span class="badge ${p.s==="done"?"done":"pend"}">${p.s==="done"?"✅ DONE":"⏳ PENDING"}</span></h3>
-    <p>${p.d}</p><div class="next">▸ ${p.n}</div></div>`).join("");
-}
-render(PHASES);
+<footer>
+  Built by <b>Hemant Vasist</b> ·
+  <a href="https://github.com/hemantvasistha/cyber-lab">github.com/hemantvasistha/cyber-lab</a><br>
+  Practice only inside the lab · snapshot before experiments · journal every session
+</footer>
 
-/* ============ OPTIONAL: Supabase live progress ============
-   After publishing: if config/supabase.json exists (url + anonKey),
-   phase statuses hydrate live from the lab_progress table.
-   No config? Dashboard stays fully static. Setup: docs/supabase.md */
-(async () => {
-  try {
-    const cfg = await fetch('config/supabase.json').then(r => r.ok ? r.json() : null);
-    if (!cfg || !cfg.url || !cfg.anonKey) return;
-    const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
-    const sb = createClient(cfg.url, cfg.anonKey);
-    const { data, error } = await sb.from('lab_progress').select('phase_title,status,next');
-    if (error || !data || !data.length) return;
-    const rows = Object.fromEntries(data.map(r => [r.phase_title, r]));
-    PHASES.forEach(p => {
-      const row = rows[p.t];
-      if (row) { if (row.status) p.s = row.status; if (row.next) p.n = row.next; }
-    });
-    render(PHASES);
-  } catch (e) { /* static/offline mode — silently ignore */ }
-})();
-</script>
+<script src="assets/app.js"></script>
+<script src="assets/terminal.js"></script>
 </body>
 </html>
