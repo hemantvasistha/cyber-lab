@@ -1,8 +1,9 @@
 # CyberLab — install core tools (run by setup-lab.ps1; expects admin)
 $ErrorActionPreference = "Stop"
 
+$wingetCmd = Get-Command winget -ErrorAction SilentlyContinue
 $wingetCandidates = @(
-    (Get-Command winget -ErrorAction SilentlyContinue)?.Source,
+    if ($wingetCmd) { $wingetCmd.Source } else { $null },
     "$env:LOCALAPPDATA\Microsoft\WindowsApps\winget.exe"
 )
 $WINGET = $wingetCandidates | Where-Object { $_ -and (Test-Path $_) } | Select-Object -First 1
