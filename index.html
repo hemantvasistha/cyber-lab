@@ -14,6 +14,7 @@
   <a class="brand" href="#" onclick="showTab('dashboard');return false;">
     <svg viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="1.8">
       <path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/>
+      <div style="display:none"></div>
       <path d="M9 12l2 2 4-4" stroke="#3fb950"/>
     </svg>
     CyberLab <span style="color:var(--accent)">Academy</span>
@@ -23,9 +24,15 @@
     <button data-tab="academy">Academy</button>
     <button data-tab="terminal">Terminal</button>
     <button data-tab="tools">Tools</button>
+    <button data-tab="learn">Learn</button>
     <button data-tab="glossary">Glossary</button>
+    <button data-tab="legal">Legal</button>
   </div>
-  <div class="pill">⭐ <b id="navxpv">0</b> XP</div>
+  <div class="pill" id="authpill">
+    ⭐ <b id="navxpv">0</b> XP ·
+    <button class="authbtn" id="authbtn">Sign in</button>
+    <span id="authmail" style="display:none"></span>
+  </div>
 </nav>
 
 <!-- ================= DASHBOARD ================= -->
@@ -56,17 +63,17 @@
           </linearGradient>
         </defs>
         <rect x="0" y="0" width="420" height="300" rx="14" fill="#0b0f14" stroke="#30363d"/>
-        <rect x="20" y="18" width="380" height="120" rx="10" fill="url(#g1)" stroke="#58a6ff"/>
+        <rect x="20"  y="18"  width="380" height="120" rx="10" fill="url(#g1)" stroke="#58a6ff"/>
         <text x="210" y="42" fill="#e6edf3" font-size="14" text-anchor="middle" font-weight="bold">WINDOWS 11 — the host</text>
-        <rect x="40" y="58" width="105" height="34" rx="8" fill="#161b22" stroke="#30363d"/>
-        <text x="92" y="80" fill="#8b949e" font-size="11" text-anchor="middle">VirtualBox</text>
-        <rect x="158" y="58" width="105" height="34" rx="8" fill="#161b22" stroke="#30363d"/>
-        <text x="210" y="80" fill="#8b949e" font-size="11" text-anchor="middle">Dashboard UI</text>
-        <rect x="276" y="58" width="105" height="34" rx="8" fill="#161b22" stroke="#30363d"/>
-        <text x="328" y="80" fill="#8b949e" font-size="11" text-anchor="middle">Scripts (D:)</text>
-        <rect x="40" y="152" width="360" height="128" rx="12" fill="#0b0f14" stroke="#3fb950"/>
+        <rect x="40"  y="58"  width="105" height="34" rx="8" fill="#161b22" stroke="#30363d"/>
+        <text x="92"  y="80"  fill="#8b949e" font-size="11" text-anchor="middle">VirtualBox</text>
+        <rect x="158" y="58"  width="105" height="34" rx="8" fill="#161b22" stroke="#30363d"/>
+        <text x="210" y="80"  fill="#8b949e" font-size="11" text-anchor="middle">Dashboard UI</text>
+        <rect x="276" y="58"  width="105" height="34" rx="8" fill="#161b22" stroke="#30363d"/>
+        <text x="328" y="80"  fill="#8b949e" font-size="11" text-anchor="middle">Scripts (D:)</text>
+        <rect x="40"  y="152" width="360" height="128" rx="12" fill="#0b0f14" stroke="#3fb950"/>
         <text x="220" y="176" fill="#e6edf3" font-size="14" text-anchor="middle" font-weight="bold">KALI LINUX — the guest VM</text>
-        <rect x="60" y="192" width="100" height="30" rx="8" fill="#161b22" stroke="#30363d"/>
+        <rect x="60"  y="192" width="100" height="30" rx="8" fill="#161b22" stroke="#30363d"/>
         <text x="110" y="211" fill="#8b949e" font-size="11" text-anchor="middle">Terminal</text>
         <rect x="172" y="192" width="100" height="30" rx="8" fill="#161b22" stroke="#30363d"/>
         <text x="222" y="211" fill="#8b949e" font-size="11" text-anchor="middle">Wireshark</text>
@@ -85,14 +92,14 @@
     <div class="card"><h3>🎓 The Academy</h3>
       <p class="muted">Five gated levels from zero to professional. Every module has lessons +
       a knowledge check; every level ends in an exam. Pass 80% to unlock the next level.
-      Your progress is saved in your browser — no account needed.</p></div>
+      Progress syncs to your account when you're signed in — saved in your browser otherwise.</p></div>
     <div class="card"><h3>💻 The Terminal Trainer</h3>
       <p class="muted">A real-feeling Linux terminal in your browser with a virtual filesystem.
       Practice pwd, ls, cd, cat, grep, find, nmap and more with guided missions that
       award XP — before you ever touch the actual VM.</p></div>
     <div class="card"><h3>🧰 The Tool Reference</h3>
-      <p class="muted">The 12 core lab tools — what each does, when you unlock it,
-      and ready-to-copy commands for the real Kali VM.</p></div>
+      <p class="muted">The 12 core lab tools — what each does, which level unlocks it,
+      official documentation links, and copy-ready commands for the real Kali VM.</p></div>
     <div class="card"><h3>🖥️ The Real Lab</h3>
       <p class="muted">A genuine Kali Linux VM on this machine's D: drive, built by
       one script: <code>scripts\setup-lab.ps1</code>. Verified download, snapshot-protected,
@@ -133,8 +140,16 @@
 <!-- ================= TOOLS ================= -->
 <section id="tab-tools" hidden>
   <h2 class="tabtitle">Lab Tools — list & command guide</h2>
-  <p class="tabsub">Every core tool in the Kali VM: what it does, which level unlocks it, and copy-ready commands to run inside the real lab.</p>
+  <p class="tabsub">Every core tool in the Kali VM: what it does, which level unlocks it, official docs, and copy-ready commands to run inside the real lab.</p>
   <div class="grid" id="toollist"></div>
+</section>
+
+<!-- ================= LEARN ================= -->
+<section id="tab-learn" hidden>
+  <h2 class="tabtitle">Learn — courses, videos, sites & software</h2>
+  <p class="tabsub">Verified external resources mapped to your level. Everything links out to the official source — watch, practice, come back and prove it.</p>
+  <input id="lsearch" placeholder="Filter resources… (e.g. python, ctf, kali, burp)">
+  <div id="learnlist"></div>
 </section>
 
 <!-- ================= GLOSSARY ================= -->
@@ -143,6 +158,82 @@
   <p class="tabsub">Never get lost in jargon again.</p>
   <input id="gsearch" placeholder="Search a term… (e.g. port, hash, payload)">
   <div class="glos" id="gloslist"></div>
+</section>
+
+<!-- ================= LEGAL ================= -->
+<section id="tab-legal" hidden>
+  <h2 class="tabtitle">Legal & Policies</h2>
+  <p class="tabsub">The rules of this platform, your rights, and my obligations — written to be read, not skipped.</p>
+
+  <div class="card">
+    <h3>1 · Terms of Service</h3>
+    <p class="muted"><b>The deal.</b> This site provides free educational content about cybersecurity.
+    By using it you agree: (a) content is for learning only; (b) you will not use anything here
+    against systems you don't own or lack written permission to test; (c) the simulated terminal
+    is a teaching sandbox — nothing you type here leaves your browser; (d) accounts (if you create
+    one) store only the data described in the Privacy section. I may update these terms; material
+    changes will be noted on this page. Violating the ethical-use rule ends your permission to use
+    this site immediately.</p>
+  </div>
+
+  <div class="card">
+    <h3>2 · Privacy Policy (India DPDP Act 2023–aligned)</h3>
+    <p class="muted"><b>What is collected.</b> Nothing by default. Without signing in, everything
+    (progress, missions, XP) lives in your browser's localStorage and never leaves your device.
+    If you <b>choose</b> to sign in with email (Supabase Auth), I store: your email address,
+    a user ID, and your learning progress (level, modules, exam results, XP) and basic audit
+    events (sign-in time) so your progress follows you across devices.
+    <b>Why (purpose).</b> To provide the account feature you asked for — nothing else. No ads,
+    no trackers, no analytics, no sale of data, ever.
+    <b>Your rights (DPDP).</b> Access, correction, and <b>erasure</b>: email
+    <a href="mailto:getosaneditz@gmail.com">getosaneditz@gmail.com</a> and your account + all
+    associated data will be deleted within 30 days. You may also simply stop using the account —
+    anonymous local-only use remains fully available.
+    <b>Security.</b> Authentication is delegated to Supabase Auth (industry standard); this static
+    site never sees or stores your password. Data lives in Supabase (AWS Mumbai region by default)
+    with Row Level Security so an account can only read/write its own rows.
+    <b>Children.</b> Not directed at children under 13 (under 18 requires parent/teacher supervision).
+    <b>Contact / Grievance Officer.</b> Hemant Vasist — <a href="mailto:getosaneditz@gmail.com">getosaneditz@gmail.com</a>.</p>
+  </div>
+
+  <div class="card">
+    <h3>3 · Ethical Use & Educational Disclaimer</h3>
+    <p class="muted">Everything here — lessons, terminal simulator, tool guides, commands — exists
+    <b>solely for legal, defensive, and educational purposes</b>. The commands shown are meant for
+    lab environments: machines you own or virtual machines you built. Running them against systems
+    you don't own is a crime in most jurisdictions, including India (Information Technology Act,
+    2000 — ss. 43, 66) and the US (Computer Fraud and Abuse Act). Neither this site, its author,
+    nor GitHub is responsible for misuse. <b>If you are unsure whether a target is yours — it isn't.</b></p>
+  </div>
+
+  <div class="card">
+    <h3>4 · Cookie & Storage Notice</h3>
+    <p class="muted">This site sets <b>no advertising or tracking cookies</b>. It uses browser
+    <code>localStorage</code> strictly to remember your progress (levels, missions, XP) on your own
+    device — this is functional storage, not tracking. If you sign in, Supabase Auth stores a
+    session token in localStorage so you stay logged in; sign out clears it. Clearing your browser
+    data wipes local progress (signing in protects it from that).</p>
+  </div>
+
+  <div class="card">
+    <h3>5 · Copyright & Content Attribution</h3>
+    <p class="muted">All original content (lessons, quizzes, code, diagrams) © 2026 Hemant Vasist,
+    MIT licensed — see the repo's LICENSE. External resources in the Learn tab are linked, not
+    hosted: all rights belong to their creators (freeCodeCamp, David Bombal, NetworkChuck,
+    PortSwigger, Kali.org, TryHackMe, etc.). Trademarks belong to their owners. To report a
+    copyright concern: <a href="mailto:getosaneditz@gmail.com">getosaneditz@gmail.com</a>
+    (GitHub's DMCA process also applies to the repository).</p>
+  </div>
+
+  <div class="card">
+    <h3>6 · Accessibility Statement</h3>
+    <p class="muted">I aim for WCAG 2.1 AA basics: keyboard-navigable tabs and modals, visible
+    focus outlines, semantic headings, labeled form fields, color contrast on all text, and
+    <code>prefers-reduced-motion</code> support. Found a barrier? Email me and I'll fix it.</p>
+  </div>
+
+  <div class="callout">Last updated: 21 September 2026 · Questions about anything on this page:
+  <a href="mailto:getosaneditz@gmail.com">getosaneditz@gmail.com</a></div>
 </section>
 
 </main>
@@ -155,6 +246,12 @@
 <footer>
   Built by <b>Hemant Vasist</b> ·
   <a href="https://github.com/hemantvasistha/cyber-lab">github.com/hemantvasistha/cyber-lab</a><br>
+  <a href="#" onclick="showTab('legal');return false;">Terms</a> ·
+  <a href="#" onclick="showTab('legal');return false;">Privacy</a> ·
+  <a href="#" onclick="showTab('legal');return false;">Ethical Use</a> ·
+  <a href="#" onclick="showTab('legal');return false;">Cookies</a> ·
+  <a href="#" onclick="showTab('legal');return false;">Copyright</a> ·
+  <a href="#" onclick="showTab('legal');return false;">Accessibility</a><br>
   Practice only inside the lab · snapshot before experiments · journal every session
 </footer>
 

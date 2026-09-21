@@ -6,7 +6,10 @@
 /* ---------- persistence ---------- */
 const PKEY = "cyberlab-academy-v1";
 const prog = JSON.parse(localStorage.getItem(PKEY) || "{}");
-function saveProg() { localStorage.setItem(PKEY, JSON.stringify(prog)); }
+function saveProg() {
+  localStorage.setItem(PKEY, JSON.stringify(prog));
+  if (typeof pushProgress === "function") pushProgress(); // cloud sync when signed in
+}
 
 /* ---------- course data: 5 gated levels ---------- */
 const COURSE = [
@@ -257,30 +260,30 @@ const COURSE = [
 
 /* ---------- tools reference (list + per-tool commands) ---------- */
 const TOOLS = [
-  { n: "nmap", cat: "Recon", lvl: "L2", desc: "Port scanner — discovers live hosts, open ports, service versions.",
-    cmds: [["Scan your lab gateway", "nmap -sV 10.0.2.2"], ["Quick top-1000 ports", "nmap 10.0.2.2"], ["Save output", "nmap -sV -oN scan.txt 10.0.2.2"]] },
-  { n: "Wireshark", cat: "Network", lvl: "L2", desc: "GUI packet analyzer — read the traffic flowing through an interface.",
-    cmds: [["Start capture (GUI)", "wireshark &"], ["CLI capture", "tshark -i eth0"], ["Filter HTTP traffic", "tshark -Y http -i eth0"]] },
-  { n: "Burp Suite", cat: "Web", lvl: "L3", desc: "Intercept, inspect and modify web traffic; the web-hacker cockpit.",
-    cmds: [["Launch (Community)", "burpsuite &"], ["CLI variant", "java -jar burpsuite_community.jar"]] },
-  { n: "gobuster", cat: "Web", lvl: "L3", desc: "Directory/file brute-forcer for websites.",
-    cmds: [["Find hidden dirs", "gobuster dir -u http://10.0.2.2 -w /usr/share/wordlists/dirb/common.txt"]] },
-  { n: "sqlmap", cat: "Web", lvl: "L3", desc: "Automated SQL-injection detection/exploitation — lab targets only.",
-    cmds: [["Test a parameter", "sqlmap -u 'http://10.0.2.2/item.php?id=1' --batch"]] },
-  { n: "john", cat: "Cracking", lvl: "L3", desc: "Password hash cracker — concepts: wordlists, rules, salts.",
-    cmds: [["Crack with wordlist", "john --wordlist=/usr/share/wordlists/rockyou.txt hashes.txt"], ["Show results", "john --show hashes.txt"]] },
-  { n: "hydra", cat: "Cracking", lvl: "L4", desc: "Online login brute-forcer (SSH/FTP/HTTP forms).",
-    cmds: [["SSH brute (lab only)", "hydra -l kali -P /usr/share/wordlists/rockyou.txt 10.0.2.15 ssh"]] },
-  { n: "Metasploit", cat: "Exploitation", lvl: "L4", desc: "Exploit framework — pairs exploits with payloads (lab VMs only).",
-    cmds: [["Console", "msfconsole"], ["Find a module", "search type:exploit vsftpd"], ["Run a module", "use 0; set RHOSTS 10.0.2.15; run"]] },
-  { n: "Nikto", cat: "Web", lvl: "L3", desc: "Web server scanner for dangerous files and misconfigurations.",
-    cmds: [["Basic scan", "nikto -h http://10.0.2.2"]] },
-  { n: "tcpdump", cat: "Network", lvl: "L2", desc: "Command-line packet capture.",
-    cmds: [["Capture on eth0", "sudo tcpdump -i eth0 -nn"], ["Save to file", "sudo tcpdump -i eth0 -w /tmp/cap.pcap"]] },
-  { n: "netcat", cat: "Utility", lvl: "L3", desc: "TCP/UDP swiss-army knife — banners, transfers, shells.",
-    cmds: [["Grab a banner", "nc -nv 10.0.2.2 22"], ["Listen", "nc -lvnp 4444"]] },
-  { n: "searchsploit", cat: "Recon", lvl: "L4", desc: "Offline Exploit-DB search — find public exploits for versions you discover.",
-    cmds: [["Search", "searchsploit vsftpd 2.3.4"]] }
+  { n: "nmap", cat: "Recon", lvl: "L2", site: "https://nmap.org", desc: "Port scanner — discovers live hosts, open ports, service versions.",
+    cmds: [["Scan your lab gateway", "nmap -sV 10.0.2.2"], ["Quick top-1000 ports", "nmap 10.0.2.2"], ["Ping-sweep the lab subnet", "nmap -sn 10.0.2.0/24"], ["Aggressive scan (lab only)", "nmap -A -T4 10.0.2.15"], ["Save output", "nmap -sV -oN scan.txt 10.0.2.2"]] },
+  { n: "Wireshark", cat: "Network", lvl: "L2", site: "https://www.wireshark.org/docs/", desc: "GUI packet analyzer — read the traffic flowing through an interface.",
+    cmds: [["Start capture (GUI)", "wireshark &"], ["CLI capture", "tshark -i eth0"], ["Filter HTTP traffic", "tshark -Y http -i eth0"], ["Display filter by IP", "ip.addr == 10.0.2.15"], ["Reassemble a conversation", "right-click packet → Follow → TCP Stream"]] },
+  { n: "Burp Suite", cat: "Web", lvl: "L3", site: "https://portswigger.net/burp/documentation", desc: "Intercept, inspect and modify web traffic; the web-hacker cockpit.",
+    cmds: [["Launch (Community)", "burpsuite &"], ["Browser proxy to set", "127.0.0.1:8080 (Proxy → Intercept on)"], ["CLI variant", "java -jar burpsuite_community.jar"]] },
+  { n: "gobuster", cat: "Web", lvl: "L3", site: "https://github.com/OJ/gobuster", desc: "Directory/file brute-forcer for websites.",
+    cmds: [["Find hidden dirs", "gobuster dir -u http://10.0.2.2 -w /usr/share/wordlists/dirb/common.txt"], ["With extensions", "gobuster dir -u http://10.0.2.15 -w /usr/share/wordlists/dirb/common.txt -x php,html,txt"], ["VHOST discovery", "gobuster vhost -u http://10.0.2.15 -w /usr/share/wordlists/dirb/common.txt"]] },
+  { n: "sqlmap", cat: "Web", lvl: "L3", site: "https://github.com/sqlmapproject/sqlmap/wiki/Usage", desc: "Automated SQL-injection detection/exploitation — lab targets only.",
+    cmds: [["Test a parameter", "sqlmap -u 'http://10.0.2.2/item.php?id=1' --batch"], ["List databases (lab)", "sqlmap -u 'http://10.0.2.15/item.php?id=1' --dbs --batch"], ["Dump a table (lab)", "sqlmap -u 'http://10.0.2.15/item.php?id=1' -D labdb -T users --dump --batch"]] },
+  { n: "john", cat: "Cracking", lvl: "L3", site: "https://www.openwall.com/john/doc/", desc: "Password hash cracker — concepts: wordlists, rules, salts.",
+    cmds: [["Crack with wordlist", "john --wordlist=/usr/share/wordlists/rockyou.txt hashes.txt"], ["With mutation rules", "john --wordlist=/usr/share/wordlists/rockyou.txt --rules hashes.txt"], ["Show results", "john --show hashes.txt"]] },
+  { n: "hydra", cat: "Cracking", lvl: "L4", site: "https://github.com/vanhauser-thc/thc-hydra", desc: "Online login brute-forcer (SSH/FTP/HTTP forms).",
+    cmds: [["SSH brute (lab only)", "hydra -l kali -P /usr/share/wordlists/rockyou.txt 10.0.2.15 ssh"], ["HTTP POST form", "hydra -l admin -P /usr/share/wordlists/rockyou.txt 10.0.2.15 http-post-form '/login:user=^USER^&pass=^PASS^:F=failed'"]] },
+  { n: "Metasploit", cat: "Exploitation", lvl: "L4", site: "https://docs.metasploit.com", desc: "Exploit framework — pairs exploits with payloads (lab VMs only).",
+    cmds: [["Console", "msfconsole"], ["Find a module", "search type:exploit vsftpd"], ["Module info", "info"], ["Set payload", "set PAYLOAD cmd/unix/reverse_bash"], ["Run a module", "use 0; set RHOSTS 10.0.2.15; run"]] },
+  { n: "Nikto", cat: "Web", lvl: "L3", site: "https://cirt.net/Nikto2", desc: "Web server scanner for dangerous files and misconfigurations.",
+    cmds: [["Basic scan", "nikto -h http://10.0.2.2"], ["Scan a specific port", "nikto -h 10.0.2.15 -p 8080"]] },
+  { n: "tcpdump", cat: "Network", lvl: "L2", site: "https://www.tcpdump.org/manpages/", desc: "Command-line packet capture.",
+    cmds: [["Capture on eth0", "sudo tcpdump -i eth0 -nn"], ["Save to file", "sudo tcpdump -i eth0 -w /tmp/cap.pcap"], ["Read a capture back", "tcpdump -nn -r /tmp/cap.pcap"], ["Filter host + port", "sudo tcpdump -i eth0 host 10.0.2.15 and port 80"]] },
+  { n: "netcat", cat: "Utility", lvl: "L3", site: "https://nmap.org/ncat/guide/", desc: "TCP/UDP swiss-army knife — banners, transfers, shells.",
+    cmds: [["Grab a banner", "nc -nv 10.0.2.2 22"], ["Listen", "nc -lvnp 4444"], ["Transfer a file", "nc -lvp 4444 > out.bin  (sender: nc <host> 4444 < in.bin)"]] },
+  { n: "searchsploit", cat: "Recon", lvl: "L4", site: "https://www.exploit-db.com/searchsploit", desc: "Offline Exploit-DB search — find public exploits for versions you discover.",
+    cmds: [["Search", "searchsploit vsftpd 2.3.4"], ["Copy exploit to cwd", "searchsploit -m 40839.py"], ["JSON output for scripts", "searchsploit --json vsftpd"]] }
 ];
 
 /* ---------- glossary ---------- */
@@ -314,7 +317,52 @@ const GLOSS = [
   ["Privilege escalation", "Gaining higher permissions than granted."],
   ["Wordlist", "A list of candidate passwords/directories used by tools."],
   ["Banner grabbing", "Reading a service's self-announcement (version info)."],
-  ["Baseline", "The 'normal' profile against which anomalies are detected."]
+  ["Baseline", "The 'normal' profile against which anomalies are detected."],
+  ["Reverse shell", "A shell that connects BACK to the attacker's listener — the classic lab exercise."],
+  ["Bind shell", "A shell that listens on the target and waits for the attacker to connect."],
+  ["RCE", "Remote Code Execution — running your code on someone else's machine. The jackpot flaw."],
+  ["IDOR", "Insecure Direct Object Reference — changing /invoice/1041 to /invoice/1042 and seeing someone else's data."],
+  ["SSRF", "Server-Side Request Forgery — tricking a server into making requests for you."],
+  ["Fuzzing", "Throwing malformed/many inputs at a program to find cracks."],
+  ["Pivoting", "Using a compromised machine to reach networks it can see but you can't."],
+  ["Tunnel", "A channel carrying one protocol inside another (SSH tunnels are the classic)."],
+  ["IOC", "Indicator of Compromise — evidence an intrusion happened (a hash, IP, domain)."],
+  ["Threat model", "A written answer to: who might attack, what they want, and what stops them."],
+  ["Responsible disclosure", "Reporting a vuln to the owner privately so it can be fixed — the only legal path."]
+];
+
+/* ---------- learn: verified external courses, sites & software ---------- */
+const LEARN = [
+  { cat: "🎥 Video Courses (free, verified)", items: [
+    ["Python for Beginners — freeCodeCamp (full course)", "The language of every security script. Level 1–2.", "https://www.youtube.com/watch?v=rfscVS0vtbw"],
+    ["Linux for Ethical Hackers (Kali) — freeCodeCamp", "The exact OS your VM runs. Level 2.", "https://www.youtube.com/watch?v=lZAoFs75_cs"],
+    ["Hands-On Cybersecurity & Ethical Hacking — freeCodeCamp", "Kali-based full course — the whole lab in one video. Level 3+.", "https://www.youtube.com/watch?v=ug8W0sFiVJo"],
+    ["Linux for Hackers — David Bombal", "Companion to your terminal missions. Level 2.", "https://www.youtube.com/watch?v=YJUVNlmIO6E"],
+    ["Ethical Hacking: Getting Started — David Bombal (playlist)", "Roadmap and mindset from a working professional.", "https://www.youtube.com/playlist?list=PLhfrWIlLOoKPqmsoVb0STYzw4IaTe1fxn"],
+    ["NetworkChuck — Learn Ethical Hacking (playlist)", "Beginner-friendly, high-energy hacking fundamentals.", "https://www.youtube.com/networkchuck"]
+  ]},
+  { cat: "🌐 Practice Platforms (legal, browser-based)", items: [
+    ["OverTheWire: Bandit", "SSH wargame that teaches Linux the way the real lab expects. Level 1–2.", "https://overthewire.org/wargames/bandit/"],
+    ["PortSwigger Web Security Academy", "The best free web-security labs on earth — pairs with Level 3.", "https://portswigger.net/web-security"],
+    ["TryHackMe", "Guided rooms, free tier; upgrade when your level justifies it.", "https://tryhackme.com"],
+    ["PicoCTF", "Beginner CTF from Carnegie Mellon — perfect first flags. Level 3.", "https://picoctf.org"],
+    ["Hack The Box", "Self-directed labs — start after Level 3 exam.", "https://www.hackthebox.com"],
+    ["VulnHub", "Downloadable vulnerable VMs for your VirtualBox lab. Level 4.", "https://www.vulnhub.com"]
+  ]},
+  { cat: "📚 Official Documentation", items: [
+    ["Kali Linux — official docs & tools list", "Every tool your VM ships with, from the source.", "https://www.kali.org/docs/"],
+    ["nmap — reference guide", "The scanner's own book.", "https://nmap.org/book/man.html"],
+    ["Wireshark — user guide", "Packet analysis from the authors.", "https://www.wireshark.org/docs/"],
+    ["GTFOBins", "Unix binaries you can abuse for privilege escalation (defensive knowledge).", "https://gtfobins.github.io"],
+    ["Exploit-DB", "The public exploit archive — searchsploit's online home.", "https://www.exploit-db.com"]
+  ]},
+  { cat: "🖥️ Software for the Host PC (all free)", items: [
+    ["VirtualBox", "Runs the Kali VM — already handled by scripts/install-tools.ps1.", "https://www.virtualbox.org/wiki/Downloads"],
+    ["7-Zip", "Extracts the Kali image — also in install-tools.ps1.", "https://www.7-zip.org/download.html"],
+    ["Wireshark (Windows)", "Optional host-side packet viewer — in install-tools.ps1.", "https://www.wireshark.org/download.html"],
+    ["Burp Suite Community", "Optional Windows install; the Kali VM also includes it.", "https://portswigger.net/burp/communitydownload"],
+    ["Git for Windows", "How this repo stays versioned.", "https://git-scm.com/download/win"]
+  ]}
 ];
 
 /* ---------- tiny helpers ---------- */
@@ -325,6 +373,89 @@ function recFor(id){
   const r = prog[id] = prog[id] || {};
   r.mods = r.mods || {}; r.les = r.les || {}; r.quiz = r.quiz || []; r.exam = r.exam || [];
   return r;
+}
+
+/* ---------- privacy-respecting audit (signed-in users only) ---------- */
+async function auditEvent(kind, detail){
+  try {
+    if (!window.__supabase || !prog.user) return; // anonymous/local-only → nothing leaves the browser
+    await window.__supabase.from("audit_log").insert({ user_id: prog.user.id, event: kind, detail: detail || null });
+  } catch(e){ /* audit must never break the app */ }
+}
+
+/* ============================================================
+   AUTH (optional Supabase) — site is fully static without config
+   ============================================================ */
+let sb = null;
+async function initAuth(){
+  try {
+    const cfg = await (await fetch("config/supabase.json")).json();
+    if (!cfg?.url || !cfg?.anonKey || cfg.url.includes("YOUR-PROJECT")) return;
+    const mod = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");
+    sb = mod.createClient(cfg.url, cfg.anonKey);
+    window.__supabase = sb;
+    const { data } = await sb.auth.getSession();
+    if (data?.session?.user){ prog.user = { id: data.session.user.id, email: data.session.user.email }; await loadProgress(); }
+    sb.auth.onAuthStateChange((e, s) => {
+      if (e === "SIGNED_OUT"){ delete prog.user; saveProg(); }
+      renderAuth();
+    });
+  } catch(e){ /* config absent → stay static */ }
+  renderAuth();
+}
+function renderAuth(){
+  const btn = $("#authbtn"), mail = $("#authmail"); if (!btn) return;
+  if (prog.user){
+    btn.textContent = "Sign out";
+    mail.style.display = ""; mail.textContent = prog.user.email;
+  } else {
+    btn.textContent = "Sign in";
+    mail.style.display = "none"; mail.textContent = "";
+  }
+}
+async function authClick(){
+  if (!sb){ openAuthInfo(); return; }
+  if (prog.user){ await sb.auth.signOut(); delete prog.user; saveProg(); renderAuth(); return; }
+  const email = prompt("Email for a magic sign-in link (no password needed):");
+  if (!email) return;
+  const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname } });
+  openAuthInfo(error ? ("Sign-in failed: " + error.message)
+                     : ("Check " + email + " — click the link to finish. Progress syncs automatically."));
+  if (!error) auditEvent("auth", "magic link sent");
+}
+function openAuthInfo(msg){
+  $("#modalbox").innerHTML = `<h3>🔑 Account & Sync</h3>
+    <p class="muted">${msg ? esc(msg) + "<br><br>" : ""}Accounts are <b>optional</b> — without one, all progress stays
+    private in this browser. Signing in syncs progress across devices using: your email, progress,
+    and minimal audit events (see the
+    <a href="#" onclick="showTab('legal');closeModal();return false;">Privacy policy</a>).
+    Site owner: add <code>config/supabase.json</code> to enable (docs/supabase.md).</p>
+    <button class="btn primary" onclick="closeModal()">Got it</button>`;
+  $("#modal").classList.add("open");
+}
+let pulledOnce = false;
+async function loadProgress(){
+  if (!sb || !prog.user || pulledOnce) return;
+  pulledOnce = true;
+  try {
+    const uid = prog.user.id;
+    const { data } = await sb.from("progress").select("payload").eq("user_id", uid).maybeSingle();
+    const local = { ...prog }; delete local.user;
+    const remote = data?.payload || {};
+    const merged = { ...local };
+    for (const k of Object.keys(remote))
+      if (!local[k] || ((remote[k]?.ts||0) > (local[k]?.ts||0))) merged[k] = remote[k];
+    for (const k of Object.keys(merged)) prog[k] = merged[k];
+    prog.user = { id: uid, email: prog.user.email };
+    saveProg(); renderDashboard();
+  } catch(e){ /* offline → local state stands */ }
+}
+async function pushProgress(){
+  try {
+    if (!sb || !prog.user) return;
+    const payload = { ...prog }; delete payload.user;
+    await sb.from("progress").upsert({ user_id: prog.user.id, payload, updated_at: new Date().toISOString() });
+  } catch(e){ /* offline → retried on next save */ }
 }
 
 /* ---------- gating engine ---------- */
@@ -347,14 +478,15 @@ function levelProgress(lvl){
 }
 
 /* ---------- TABS ---------- */
-const TABS = ["dashboard","academy","terminal","tools","glossary"];
+const TABS = ["dashboard","academy","terminal","tools","learn","glossary","legal"];
 function showTab(name){
   TABS.forEach(t => $("#tab-"+t).hidden = (t !== name));
   $$("#navlinks button").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
   if (name === "dashboard") renderDashboard();
   if (name === "academy") renderAcademy();
   if (name === "tools") renderTools();
-  if (name === "glossary") renderGlossary();
+  if (name === "learn") renderLearn();
+  if (name === "glossary") renderGlossary($("#gsearch")?.value || "");
 }
 
 /* ---------- DASHBOARD ---------- */
@@ -466,9 +598,10 @@ function drawQuiz(lvl, m){
     if (qi >= m.quiz.length){
       if (correct === m.quiz.length){
         const rec = recFor(lvl.id);
-        if (!rec.quiz.includes(m.id)) rec.quiz.push(m.id);
+        if (!rec.quiz.includes(m.id))        rec.quiz.push(m.id);
         if (rec.les[m.id]?.length === m.lessons.length) rec.mods[m.id] = true;
-        saveProg();
+        rec.ts = Date.now(); saveProg();
+        auditEvent("module", m.id);
         box.innerHTML = `<p class="score okc" style="color:var(--green)">✅ Perfect — module complete!</p>
           <button class="btn primary" onclick="closeModal()">Back to Academy</button>`;
         renderAcademy();
@@ -504,7 +637,8 @@ function openExam(lvl){
       const pass = correct/lvl.exam.length >= 0.8;
       if (pass){
         const rec = recFor(lvl.id);
-        rec.exam.push("passed"); saveProg();
+        rec.exam.push("passed"); rec.ts = Date.now(); saveProg();
+        auditEvent("exam", lvl.id);
         $("#modalbox").innerHTML = `<h3>🎓 ${lvl.name} cleared!</h3>
           <p class="score" style="color:var(--green)">${correct}/${lvl.exam.length} — next level unlocked.</p>
           <button class="btn primary" onclick="closeModal()">Continue</button>`;
@@ -540,11 +674,25 @@ function renderTools(){
         <span class="badge">${t.cat}</span>
         <span class="badge ${levelUnlocked(COURSE.find(l=>l.id===t.lvl))?"b-done":"b-lock"}">${t.lvl} ${levelUnlocked(COURSE.find(l=>l.id===t.lvl))?"unlocked":"locked"}</span></div>
       <p class="muted">${t.desc}</p>
+      <div><a class="btn" style="min-height:34px;padding:6px 12px;font-size:.78rem" href="${t.site}" target="_blank" rel="noopener noreferrer">📖 official docs</a></div>
       ${t.cmds.map(([lbl,cmd])=>`<div class="cmdrow"><code>${esc(cmd)}</code><button class="copy" data-cmd="${esc(cmd)}">copy</button></div>`).join("")}
     </div>`).join("");
   $$("#toollist .copy").forEach(b => b.onclick = () => {
     navigator.clipboard.writeText(b.dataset.cmd).then(()=>{ b.textContent="copied!"; setTimeout(()=>b.textContent="copy",1200); });
   });
+}
+
+/* ---------- LEARN ---------- */
+function renderLearn(){
+  const host = $("#learnlist"); if (!host) return;
+  host.innerHTML = LEARN.map(group => `
+    <h2 class="tabtitle" style="font-size:1.05rem;margin-top:22px">${group.cat}</h2>
+    <div class="grid">${group.items.map(([name, why, url]) => `
+      <div class="card learnitem" data-search="${esc((name+" "+why).toLowerCase())}">
+        <h3 style="margin-bottom:4px">${name}</h3>
+        <p class="muted" style="margin-bottom:9px">${why}</p>
+        <a class="btn" href="${url}" target="_blank" rel="noopener noreferrer">Open →</a>
+      </div>`).join("")}</div>`).join("");
 }
 
 /* ---------- GLOSSARY ---------- */
@@ -560,7 +708,13 @@ function renderGlossary(filter){
 document.addEventListener("DOMContentLoaded", () => {
   $$("#navlinks button").forEach(b => b.addEventListener("click", () => showTab(b.dataset.tab)));
   $("#gsearch")?.addEventListener("input", e => renderGlossary(e.target.value));
+  $("#lsearch")?.addEventListener("input", e => {
+    const f = e.target.value.toLowerCase();
+    $$("#learnlist .learnitem").forEach(el => el.style.display = el.dataset.search.includes(f) ? "" : "none");
+  });
+  $("#authbtn")?.addEventListener("click", authClick);
   const first = COURSE.find(l => levelUnlocked(l) && levelProgress(l).done < levelProgress(l).total);
   if (first) prog.lastOpened = first.id; saveProg();
   showTab("dashboard");
+  initAuth();
 });

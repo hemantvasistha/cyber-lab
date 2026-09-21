@@ -190,3 +190,8 @@ footer a:hover { text-decoration: underline; }
 @media (max-width: 460px) { .hero h2 { font-size: 2.3rem; } #termin span { display: none; } #modalbox { padding: 21px; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }
 @media (prefers-color-scheme: light) { /* Keep the product intentionally dark: it is a lab console, not a marketing page. */ }
+
+/* ---------- auth pill ---------- */
+.authbtn { padding: 5px 11px; margin-left: 6px; border: 1px solid rgba(123,220,255,.45); border-radius: 999px; color: var(--accent); background: rgba(37,185,237,.08); cursor: pointer; font: 600 .72rem 'Space Grotesk', sans-serif; letter-spacing: .02em; transition: .2s var(--ease); }
+.authbtn:hover { color: #041017; background: var(--accent); box-shadow: 0 0 14px rgba(37,185,237,.35); }
+#authmail { color: var(--green); font: 500 .72rem 'DM Mono', monospace; margin-left: 7px; }

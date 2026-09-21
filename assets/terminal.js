@@ -83,6 +83,7 @@ function completeMission(m){
   doneMissions.push(m.id); saveMissions(); renderMissions();
   tprint(`✅ mission complete: ${m.why} (+25 XP)`, "okc");
   if (typeof renderDashboard === "function") renderDashboard();
+  if (typeof auditEvent === "function") auditEvent("mission", m.id);
 }
 
 /* ---------- help ---------- */

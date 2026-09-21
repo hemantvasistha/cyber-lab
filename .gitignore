@@ -16,8 +16,9 @@ logs/
 pcaps/
 samples/
 
-# ---- Local secrets (Supabase config goes live via Pages, not git) ----
-config/supabase.json
+# NOTE: config/supabase.json is committed as a placeholder — it may only ever
+# hold the PUBLIC anon key (safe by design; RLS protects data). The service_role
+# key must never exist in this repo or any browser code.
 
 # ---- OS / editor noise ----
 Thumbs.db
