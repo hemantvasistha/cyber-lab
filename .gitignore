@@ -1,0 +1,25 @@
+# ---- Heavy binaries: never in git (GB-scale) ----
+downloads/
+vm/
+*.7z
+*.iso
+*.vdi
+*.vmdk
+*.vbox-prev
+*.ova
+
+# ---- Runtime logs & machine state ----
+logs/
+*.log
+
+# ---- Sample evidence files (may contain lab captures) ----
+pcaps/
+samples/
+
+# ---- Local secrets (Supabase config goes live via Pages, not git) ----
+config/supabase.json
+
+# ---- OS / editor noise ----
+Thumbs.db
+desktop.ini
+~$*

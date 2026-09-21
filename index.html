@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hemant's Cyber Lab — Dashboard</title>
+<style>
+  :root{
+    --bg:#0b0f14; --panel:#111823; --panel2:#0e141d; --line:#1e2a3a;
+    --text:#e6edf3; --dim:#8b98a9; --green:#2ea86b; --amber:#d99a2b;
+    --accent:#4da3ff; --accent2:#7c5cff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:radial-gradient(1200px 600px at 20% -10%, #12203a 0%, var(--bg) 55%);
+    color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; min-height:100vh; padding:32px 16px;}
+  .wrap{max-width:1080px;margin:0 auto}
+  header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:28px}
+  h1{font-size:1.7rem;letter-spacing:.5px}
+  h1 span{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .pill{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 14px;font-size:.85rem;color:var(--dim)}
+  .pill b{color:var(--amber)}
+  .bar{height:10px;background:var(--panel2);border:1px solid var(--line);border-radius:999px;overflow:hidden;margin:6px 0 26px}
+  .bar>div{height:100%;width:17%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:999px;transition:width .6s}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;transition:transform .15s,border-color .15s}
+  .card:hover{transform:translateY(-3px);border-color:#2c3e57}
+  .card h3{font-size:1.02rem;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .card p{color:var(--dim);font-size:.88rem;line-height:1.5}
+  .badge{margin-left:auto;font-size:.72rem;padding:3px 10px;border-radius:999px;border:1px solid}
+  .done{color:var(--green);border-color:var(--green)}
+  .pend{color:var(--amber);border-color:var(--amber)}
+  .next{margin-top:10px;font-size:.8rem;color:var(--accent)}
+  h2{font-size:1.05rem;margin:30px 0 12px;color:var(--dim);text-transform:uppercase;letter-spacing:2px;font-size:.8rem}
+  .links{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+  .lnk{display:block;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-decoration:none;color:var(--text);font-size:.9rem}
+  .lnk:hover{border-color:var(--accent)}
+  .lnk small{display:block;color:var(--dim);margin-top:3px;font-size:.75rem}
+  .rules{background:linear-gradient(135deg,#1a0f14,#160f1a);border:1px solid #3a1e2a;border-radius:14px;padding:18px;margin-top:16px}
+  .rules li{color:#e8b4c0;font-size:.88rem;margin:7px 0 0 18px;line-height:1.5}
+  footer{margin-top:34px;text-align:center;color:var(--dim);font-size:.8rem;line-height:1.7}
+  footer a{color:var(--accent);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>🛡️ <span>HEMANT'S CYBER LAB</span></h1>
+    <div class="pill">B.Tech Sem 1 · <b>Phase <span id="cur">2</span> of 6</b></div>
+  </header>
+
+  <div class="bar"><div id="barfill"></div></div>
+
+  <div class="grid" id="phases"></div>
+
+  <h2>📚 Your notes — start here</h2>
+  <div class="links">
+    <a class="lnk" href="notes/README.md">📖 Lab README <small>golden rules + how the lab works</small></a>
+    <a class="lnk" href="notes/cheatsheet.md">🐧 Commands cheat sheet <small>the 20 commands you'll actually use</small></a>
+    <a class="lnk" href="notes/roadmap.md">🗺️ Career roadmap <small>sem 1 → job-ready plan</small></a>
+    <a class="lnk" href="notes/lab-journal.md">📓 Lab journal <small>write an entry every session</small></a>
+    <a class="lnk" href="notes/local-lab-guide.md">💻 Local lab guide <small>how this Kali VM was built & how to reset it</small></a>
+    <a class="lnk" href="notes/future-local-lab.md">💾 Future options <small>cloud & advanced setups for later</small></a>
+  </div>
+
+  <h2>🚀 Practice targets (open in VM browser)</h2>
+  <div class="links">
+    <a class="lnk" href="https://overthewire.org/wargames/bandit/">🎯 OverTheWire: Bandit <small>learn Linux by playing — perfect first game</small></a>
+    <a class="lnk" href="https://owasp.org/www-project-web-security-dojo/">🕸️ OWASP materials <small>web security reference</small></a>
+    <a class="lnk" href="https://www.virtualbox.org/manual/UserManual.html">📦 VirtualBox manual <small>when you want VM superpowers</small></a>
+  </div>
+
+  <div class="rules">
+    <b>⚖️ The Golden Rules — read before touching any tool</b>
+    <ol>
+      <li>Only scan/attack machines <b>inside this lab</b> — your own VMs, nothing else.</li>
+      <li>Never target college, hostel, public WiFi, or any real website. Ever.</li>
+      <li>The VM is disposable — <b>snapshot before experiments, revert after mistakes.</b></li>
+      <li>Notes the same day: a lesson you can't explain is a lesson you lost.</li>
+      <li>When stuck 15+ min: read the guide again, then search, then ask — in that order.</li>
+    </ol>
+  </div>
+
+  <footer>
+    Built by <b>Hemant Vasist</b> ·
+    <a href="https://github.com/hemantvasistha">github.com/hemantvasistha</a><br>
+    Repo: <a href="https://github.com/hemantvasistha/cyber-lab">hemantvasistha/cyber-lab</a> ·
+    Dashboard served by GitHub Pages
+  </footer>
+</div>
+
+<script>
+/* ============ SINGLE SOURCE OF TRUTH ============
+   scripts/setup-lab.ps1 updates this after each install step. */
+const PHASES = [
+  {t:"📦 Lab structure",        d:"Folder skeleton on D:\\CyberLab — recon, web, pentest, forensics, CTF and more. Everything has a home.",  s:"done",  n:"Complete."},
+  {t:"🖥️ Dashboard UI",         d:"This page. Your control center: progress, notes, and rules — served from the repo itself.",               s:"done",  n:"You're looking at it."},
+  {t:"🧰 Software install",     d:"VirtualBox (runs the VM) + 7-Zip (unpacks Kali) + Wireshark & Burp Suite (your GUI tools).",              s:"pend",  n:"Next: one admin approval, one script."},
+  {t:"🐧 Kali Linux VM",        d:"Official pre-built Kali image → verified by SHA256 → extracted to D:\\CyberLab\\vm → first boot → snapshot.", s:"pend", n:"Then: download resumes automatically."},
+  {t:"☁️ GitHub publish",       d:"Push this lab to github.com/hemantvasistha — portfolio + this dashboard live on the internet.",           s:"pend",  n:"Then: repo creation + Pages."},
+  {t:"🎓 First mission",        d:"OverTheWire Bandit Level 0 → 5 from inside the VM — your first real hacking challenge, fully legal.",     s:"pend",  n:"Then: game on."}
+];
+function render(phases){
+  const done = phases.filter(p=>p.s==="done").length;
+  document.getElementById("cur").textContent = done + 1;
+  document.getElementById("barfill").style.width = Math.round(done/phases.length*100) + "%";
+  document.getElementById("phases").innerHTML = phases.map(p=>`
+  <div class="card"><h3>${p.t}
+    <span class="badge ${p.s==="done"?"done":"pend"}">${p.s==="done"?"✅ DONE":"⏳ PENDING"}</span></h3>
+    <p>${p.d}</p><div class="next">▸ ${p.n}</div></div>`).join("");
+}
+render(PHASES);
+
+/* ============ OPTIONAL: Supabase live progress ============
+   After publishing: if config/supabase.json exists (url + anonKey),
+   phase statuses hydrate live from the lab_progress table.
+   No config? Dashboard stays fully static. Setup: docs/supabase.md */
+(async () => {
+  try {
+    const cfg = await fetch('config/supabase.json').then(r => r.ok ? r.json() : null);
+    if (!cfg || !cfg.url || !cfg.anonKey) return;
+    const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+    const sb = createClient(cfg.url, cfg.anonKey);
+    const { data, error } = await sb.from('lab_progress').select('phase_title,status,next');
+    if (error || !data || !data.length) return;
+    const rows = Object.fromEntries(data.map(r => [r.phase_title, r]));
+    PHASES.forEach(p => {
+      const row = rows[p.t];
+      if (row) { if (row.status) p.s = row.status; if (row.next) p.n = row.next; }
+    });
+    render(PHASES);
+  } catch (e) { /* static/offline mode — silently ignore */ }
+})();
+</script>
+</body>
+</html>
